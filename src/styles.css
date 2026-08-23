@@ -1,0 +1,206 @@
+:root {
+  --ink: #161310;
+  --paper: #efe6d4;
+  --panel: rgba(18, 15, 12, 0.86);
+  --line: #c9b089;
+  --accent: #c45c26;
+  --warn: #e24a3a;
+  --muted: #b8aa92;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0f0d0b;
+  color: var(--paper);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#hud {
+  pointer-events: none;
+}
+
+.panel,
+.toolbar,
+.hint {
+  pointer-events: auto;
+}
+
+.panel {
+  position: fixed;
+  top: 22px;
+  width: min(320px, calc(100vw - 32px));
+  padding: 22px 22px 18px;
+  background: var(--panel);
+  border: 2px solid var(--line);
+  backdrop-filter: blur(10px);
+}
+
+.panel-left {
+  left: 22px;
+}
+
+.panel-right {
+  right: 22px;
+  width: min(280px, calc(100vw - 32px));
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--accent);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+
+h1,
+h2 {
+  font-family: Syne, sans-serif;
+  font-weight: 800;
+  line-height: 0.95;
+  margin: 0 0 16px;
+}
+
+h1 {
+  font-size: 34px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-top: 18px;
+}
+
+.spec {
+  margin: 0;
+}
+
+.spec div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid rgba(201, 176, 137, 0.28);
+  padding: 7px 0;
+  font-size: 11px;
+}
+
+.spec dt {
+  color: var(--muted);
+}
+
+.spec dd {
+  margin: 0;
+  text-align: right;
+}
+
+.note,
+.dims,
+.hint {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.inventory {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 36vh;
+  overflow: auto;
+}
+
+.inventory button,
+.toolbar button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 6px;
+  padding: 8px 10px;
+  border: 2px solid var(--line);
+  background: transparent;
+  color: var(--paper);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.inventory button.active,
+.toolbar button.on,
+.toolbar button:hover,
+.inventory button:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.inventory small {
+  color: inherit;
+  opacity: 0.7;
+}
+
+.toolbar {
+  position: fixed;
+  left: 50%;
+  bottom: 42px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.toolbar button {
+  width: auto;
+  margin: 0;
+  padding: 10px 14px;
+}
+
+.hint {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.warn {
+  color: var(--warn);
+  font-size: 11px;
+  margin: 10px 0 0;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .panel-right,
+  .hint {
+    display: none;
+  }
+
+  .panel-left {
+    width: calc(100vw - 24px);
+    left: 12px;
+    top: 12px;
+  }
+
+  .toolbar {
+    left: 12px;
+    right: 12px;
+    transform: none;
+    flex-wrap: wrap;
+  }
+}
