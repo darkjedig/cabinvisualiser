@@ -52,6 +52,8 @@ canvas {
 
 .panel-left {
   left: 22px;
+  max-height: calc(100vh - 44px);
+  overflow: auto;
 }
 
 .panel-right {
@@ -76,7 +78,7 @@ h2 {
 }
 
 h1 {
-  font-size: 34px;
+  font-size: 28px;
 }
 
 h2 {
@@ -118,17 +120,29 @@ h2 {
   list-style: none;
   margin: 0;
   padding: 0;
-  max-height: 36vh;
+  max-height: 22vh;
   overflow: auto;
 }
 
+.inv-row {
+  display: flex;
+  gap: 6px;
+  margin: 0 0 6px;
+}
+
+.inv-row.dimmed button[data-id] {
+  opacity: 0.4;
+}
+
 .inventory button,
-.toolbar button {
+.toolbar button,
+.layers button,
+.ghost {
   width: 100%;
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  margin: 0 0 6px;
+  margin: 0;
   padding: 8px 10px;
   border: 2px solid var(--line);
   background: transparent;
@@ -138,15 +152,129 @@ h2 {
   cursor: pointer;
 }
 
+.inventory button.vis,
+.inventory button.remove {
+  width: 42px;
+  flex: 0 0 42px;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.add-label {
+  margin: 10px 0 6px;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+
+.add-label:first-child {
+  margin-top: 0;
+}
+
+.add-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.add-grid button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  margin: 0;
+  padding: 7px 8px;
+  border: 2px solid var(--line);
+  background: transparent;
+  color: var(--paper);
+  font: inherit;
+  font-size: 11px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.add-grid button small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.add-grid button:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.add-grid button:hover small {
+  color: inherit;
+  opacity: 0.7;
+}
+
+.layers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 0 0 8px;
+}
+
+.layers button {
+  justify-content: center;
+}
+
 .inventory button.active,
+.inventory button.vis.on,
 .toolbar button.on,
 .toolbar button:hover,
-.inventory button:hover {
+.inventory button:hover,
+.layers button.on,
+.layers button:hover,
+.ghost:hover {
   background: var(--paper);
   color: var(--ink);
 }
 
 .inventory small {
+  color: inherit;
+  opacity: 0.7;
+}
+
+.cabin-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 0 0 16px;
+}
+
+.cabin-switch button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  margin: 0;
+  padding: 8px 10px;
+  border: 2px solid var(--line);
+  background: transparent;
+  color: var(--paper);
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cabin-switch button small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.cabin-switch button.on,
+.cabin-switch button:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.cabin-switch button.on small,
+.cabin-switch button:hover small {
   color: inherit;
   opacity: 0.7;
 }
@@ -173,6 +301,49 @@ h2 {
   transform: translateX(-50%);
   margin: 0;
   white-space: nowrap;
+}
+
+.sel-tools {
+  margin: 12px 0 0;
+  display: grid;
+  gap: 6px;
+}
+
+.nudge-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid var(--line);
+  padding: 6px 8px;
+  font-size: 11px;
+}
+
+.nudge-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.nudge-btns button {
+  width: 36px;
+  margin: 0;
+  padding: 4px 0;
+  justify-content: center;
+  border: 2px solid var(--line);
+  background: transparent;
+  color: var(--paper);
+  font: inherit;
+  cursor: pointer;
+}
+
+.nudge-btns button:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.ghost {
+  margin-top: 12px;
+  justify-content: center;
 }
 
 .warn {

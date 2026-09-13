@@ -44,6 +44,7 @@ function canvasTexture(draw: (ctx: CanvasRenderingContext2D, w: number, h: numbe
 
 export function createMaterials(): {
   spruce: THREE.MeshStandardMaterial;
+  spruceVertical: THREE.MeshStandardMaterial;
   spruceFloor: THREE.MeshStandardMaterial;
   spruceRoof: THREE.MeshStandardMaterial;
   felt: THREE.MeshStandardMaterial;
@@ -64,6 +65,17 @@ export function createMaterials(): {
   glossWhite: THREE.MeshPhysicalMaterial;
   glossBlack: THREE.MeshPhysicalMaterial;
   led: THREE.MeshStandardMaterial;
+  glassClear: THREE.MeshPhysicalMaterial;
+  bottleGreen: THREE.MeshPhysicalMaterial;
+  bottleBrown: THREE.MeshPhysicalMaterial;
+  bottleClear: THREE.MeshPhysicalMaterial;
+  liquidAmber: THREE.MeshStandardMaterial;
+  liquidWine: THREE.MeshStandardMaterial;
+  cork: THREE.MeshStandardMaterial;
+  galvanised: THREE.MeshStandardMaterial;
+  jumboGrey: THREE.MeshStandardMaterial;
+  applianceWhite: THREE.MeshStandardMaterial;
+  plasticBlack: THREE.MeshStandardMaterial;
   dispose: () => void;
 } {
   const spruceMap = canvasTexture((ctx, w, h) => {
@@ -74,6 +86,17 @@ export function createMaterials(): {
     }
   });
   spruceMap.repeat.set(2, 8);
+
+  const spruceVerticalMap = canvasTexture((ctx, w, h) => {
+    grain(ctx, w, h, "#e2d0b4", "#9a7a52");
+    for (let x = 0; x < w; x += 42) {
+      ctx.fillStyle = "rgba(90, 68, 42, 0.32)";
+      ctx.fillRect(x, 0, 3, h);
+      ctx.fillStyle = "rgba(255, 245, 220, 0.12)";
+      ctx.fillRect(x + 4, 0, 1, h);
+    }
+  });
+  spruceVerticalMap.repeat.set(10, 3);
 
   const floorMap = canvasTexture((ctx, w, h) => {
     grain(ctx, w, h, "#cbb089", "#7a5a38");
@@ -92,6 +115,13 @@ export function createMaterials(): {
     roughness: 0.82,
     metalness: 0.02,
     color: "#e8d3b0",
+  });
+
+  const spruceVertical = new THREE.MeshStandardMaterial({
+    map: spruceVerticalMap,
+    roughness: 0.78,
+    metalness: 0.02,
+    color: "#eddcc0",
   });
 
   const spruceFloor = new THREE.MeshStandardMaterial({
@@ -123,6 +153,7 @@ export function createMaterials(): {
     transparent: true,
     opacity: 0.28,
     envMapIntensity: 1.2,
+    side: THREE.DoubleSide,
   });
 
   const upvc = new THREE.MeshStandardMaterial({
@@ -230,10 +261,102 @@ export function createMaterials(): {
     metalness: 0,
   });
 
-  const maps = [spruceMap, floorMap, oakMap];
+  const glassClear = new THREE.MeshPhysicalMaterial({
+    color: "#e8f4ff",
+    transmission: 0.92,
+    roughness: 0.04,
+    metalness: 0,
+    thickness: 0.008,
+    ior: 1.5,
+    transparent: true,
+    opacity: 0.22,
+    side: THREE.DoubleSide,
+  });
+
+  const bottleGreen = new THREE.MeshPhysicalMaterial({
+    color: "#1f4a32",
+    transmission: 0.35,
+    roughness: 0.12,
+    metalness: 0.05,
+    thickness: 0.012,
+    transparent: true,
+    opacity: 0.72,
+    side: THREE.DoubleSide,
+  });
+
+  const bottleBrown = new THREE.MeshPhysicalMaterial({
+    color: "#5a3214",
+    transmission: 0.22,
+    roughness: 0.18,
+    metalness: 0.04,
+    thickness: 0.012,
+    transparent: true,
+    opacity: 0.82,
+    side: THREE.DoubleSide,
+  });
+
+  const bottleClear = new THREE.MeshPhysicalMaterial({
+    color: "#dfe8f0",
+    transmission: 0.7,
+    roughness: 0.06,
+    metalness: 0.02,
+    thickness: 0.01,
+    transparent: true,
+    opacity: 0.35,
+    side: THREE.DoubleSide,
+  });
+
+  const liquidAmber = new THREE.MeshStandardMaterial({
+    color: "#c47a22",
+    roughness: 0.25,
+    metalness: 0.02,
+    transparent: true,
+    opacity: 0.85,
+  });
+
+  const liquidWine = new THREE.MeshStandardMaterial({
+    color: "#6b1024",
+    roughness: 0.28,
+    metalness: 0.02,
+    transparent: true,
+    opacity: 0.88,
+  });
+
+  const cork = new THREE.MeshStandardMaterial({
+    color: "#c4a06a",
+    roughness: 0.9,
+    metalness: 0,
+  });
+
+  const galvanised = new THREE.MeshStandardMaterial({
+    color: "#4a4e52",
+    roughness: 0.38,
+    metalness: 0.72,
+  });
+
+  const jumboGrey = new THREE.MeshStandardMaterial({
+    color: "#6d6f74",
+    roughness: 0.92,
+    metalness: 0,
+  });
+
+  const applianceWhite = new THREE.MeshStandardMaterial({
+    color: "#f3f4f6",
+    roughness: 0.28,
+    metalness: 0.08,
+  });
+
+  const plasticBlack = new THREE.MeshStandardMaterial({
+    color: "#1a1a1c",
+    roughness: 0.55,
+    metalness: 0.04,
+  });
+
+  const maps = [spruceMap, spruceVerticalMap, floorMap, oakMap];
 
   return {
     spruce,
+    spruceVertical,
     spruceFloor,
     spruceRoof,
     felt,
@@ -254,11 +377,23 @@ export function createMaterials(): {
     glossWhite,
     glossBlack,
     led,
+    glassClear,
+    bottleGreen,
+    bottleBrown,
+    bottleClear,
+    liquidAmber,
+    liquidWine,
+    cork,
+    galvanised,
+    jumboGrey,
+    applianceWhite,
+    plasticBlack,
     dispose: () => {
       for (const map of maps) {
         map.dispose();
       }
       spruce.dispose();
+      spruceVertical.dispose();
       spruceFloor.dispose();
       spruceRoof.dispose();
       felt.dispose();
@@ -279,6 +414,17 @@ export function createMaterials(): {
       glossWhite.dispose();
       glossBlack.dispose();
       led.dispose();
+      glassClear.dispose();
+      bottleGreen.dispose();
+      bottleBrown.dispose();
+      bottleClear.dispose();
+      liquidAmber.dispose();
+      liquidWine.dispose();
+      cork.dispose();
+      galvanised.dispose();
+      jumboGrey.dispose();
+      applianceWhite.dispose();
+      plasticBlack.dispose();
     },
   };
 }

@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { ceilingAt, ROOM } from "../config";
-import type { FurnitureDef } from "../furniture/types";
+import { ceilingAt, roomBounds, type CabinSpec } from "../cabin/types";
+import { canLift, snapSize, type FurnitureDef } from "../furniture/types";
 
 export interface ControlState {
   selected: FurnitureDef | null;
@@ -11,6 +11,87 @@ export interface ControlState {
 
 interface HudApi {
   setSelection: (item: FurnitureDef | null, extras?: { ceilingHit?: boolean }) => void;
+  setPieceHidden?: (id: string, hidden: boolean) => void;
+}
+
+function snapToWall(item: FurnitureDef, cabin: CabinSpec): void {
+  const hanging = item.mount === "wall" || (item.lift && item.group.position.y > 0.12);
+  if (!hanging) {
+    return;
+  }
+  const room = roomBounds(cabin);
+  const inset = item.depth / 2 + 0.015;
+  const pos = item.group.position;
+  const options = [
+    { dist: Math.abs(room.maxZ - inset - pos.z), apply: (): void => { pos.z = room.maxZ - inset; item.group.rotation.y = 0; } },
+    { dist: Math.abs(pos.z - (room.minZ + inset)), apply: (): void => { pos.z = room.minZ + inset; item.group.rotation.y = Math.PI; } },
+    { dist: Math.abs(pos.x - (room.minX + inset)), apply: (): void => { pos.x = room.minX + inset; item.group.rotation.y = Math.PI / 2; } },
+    { dist: Math.abs(room.maxX - inset - pos.x), apply: (): void => { pos.x = room.maxX - inset; item.group.rotation.y = -Math.PI / 2; } },
+  ];
+  options.sort((a, b) => a.dist - b.dist);
+  const nearest = options[0];
+  if (nearest && nearest.dist < 0.42) {
+    nearest.apply();
+  }
+}
+
+export function clampItem(item: FurnitureDef, cabin: CabinSpec, snap: boolean): boolean {
+  const room = roomBounds(cabin);
+  const yaw = item.group.rotation.y;
+  const aligned = Math.abs(Math.cos(yaw)) > 0.7;
+  const extX = aligned ? item.width / 2 : item.depth / 2;
+  const extZ = aligned ? item.depth / 2 : item.width / 2;
+  item.group.position.x = THREE.MathUtils.clamp(
+    item.group.position.x,
+    room.minX + extX + 0.02,
+    room.maxX - extX - 0.02,
+  );
+  item.group.position.z = THREE.MathUtils.clamp(
+    item.group.position.z,
+    room.minZ + extZ + 0.02,
+    room.maxZ - extZ - 0.02,
+  );
+  if (snap) {
+    item.group.position.x = Math.round(item.group.position.x / 0.05) * 0.05;
+    item.group.position.z = Math.round(item.group.position.z / 0.05) * 0.05;
+  }
+  if (canLift(item)) {
+    const minY = item.mount === "wall" ? 0.35 : 0;
+    const maxY = Math.max(minY, ceilingAt(item.group.position.z, cabin, item.group.position.x) - item.height - 0.02);
+    item.group.position.y = THREE.MathUtils.clamp(item.group.position.y, minY, maxY);
+    if (snap) {
+      const step = item.kind === "prop" ? 0.01 : 0.05;
+      item.group.position.y = Math.round(item.group.position.y / step) * step;
+    }
+    snapToWall(item, cabin);
+  } else {
+    item.group.position.y = 0;
+  }
+  return item.group.position.y + item.height > ceilingAt(item.group.position.z, cabin, item.group.position.x) - 0.04;
+}
+
+export type NudgeAxis = "y" | "w" | "d";
+
+export function applyNudge(item: FurnitureDef, axis: NudgeAxis, dir: number): void {
+  if (axis === "y" && canLift(item)) {
+    const step = item.kind === "prop" ? 0.02 : 0.05;
+    item.group.position.y += dir * step;
+    return;
+  }
+  const resize = item.resize;
+  if (!resize || !item.rebuild) {
+    return;
+  }
+  if (axis === "w") {
+    item.width = snapSize(item.width + dir * resize.widthStep, resize.widthMin, resize.widthMax, resize.widthStep);
+    item.rebuild();
+    return;
+  }
+  if (resize.depthMin === undefined || resize.depthMax === undefined || resize.depthStep === undefined) {
+    return;
+  }
+  item.depth = snapSize(item.depth + dir * resize.depthStep, resize.depthMin, resize.depthMax, resize.depthStep);
+  item.rebuild();
 }
 
 export function createFurnitureControls(
@@ -20,7 +101,10 @@ export function createFurnitureControls(
   orbit: OrbitControls,
   items: FurnitureDef[],
   hud: HudApi,
-): { state: ControlState; selectById: (id: string) => void; dispose: () => void } {
+  getCabin: () => CabinSpec,
+  onHidePiece?: (id: string) => void,
+  onRemovePiece?: (id: string) => void,
+): { state: ControlState; selectById: (id: string) => void; clearSelection: () => void; reclamp: () => void; nudge: (axis: NudgeAxis, dir: number) => void; dispose: () => void } {
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
   const floor = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
@@ -45,8 +129,11 @@ export function createFurnitureControls(
     raycaster.setFromCamera(pointer, camera);
     const meshes: THREE.Object3D[] = [];
     for (const item of items) {
+      if (!item.group.visible) {
+        continue;
+      }
       item.group.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
+        if (child instanceof THREE.Mesh && child.visible) {
           meshes.push(child);
         }
       });
@@ -68,25 +155,7 @@ export function createFurnitureControls(
   };
 
   const applyBounds = (item: FurnitureDef): void => {
-    const yaw = item.group.rotation.y;
-    const aligned = Math.abs(Math.cos(yaw)) > 0.7;
-    const extX = aligned ? item.width / 2 : item.depth / 2;
-    const extZ = aligned ? item.depth / 2 : item.width / 2;
-    item.group.position.x = THREE.MathUtils.clamp(
-      item.group.position.x,
-      ROOM.minX + extX + 0.02,
-      ROOM.maxX - extX - 0.02,
-    );
-    item.group.position.z = THREE.MathUtils.clamp(
-      item.group.position.z,
-      ROOM.minZ + extZ + 0.02,
-      ROOM.maxZ - extZ - 0.02,
-    );
-    if (state.snap) {
-      item.group.position.x = Math.round(item.group.position.x / 0.05) * 0.05;
-      item.group.position.z = Math.round(item.group.position.z / 0.05) * 0.05;
-    }
-    state.ceilingHit = item.height > ceilingAt(item.group.position.z) - 0.04;
+    state.ceilingHit = clampItem(item, getCabin(), state.snap);
   };
 
   const refreshHelper = (item: FurnitureDef | null): void => {
@@ -170,7 +239,34 @@ export function createFurnitureControls(
     if (!state.selected) {
       return;
     }
-    if (event.key === "q" || event.key === "Q" || event.key === "[") {
+    if (event.key === "h" || event.key === "H") {
+      const id = state.selected.id;
+      select(null);
+      onHidePiece?.(id);
+      return;
+    }
+    if ((event.key === "Delete" || event.key === "Backspace") && state.selected.spawned) {
+      event.preventDefault();
+      const id = state.selected.id;
+      select(null);
+      onRemovePiece?.(id);
+      return;
+    }
+    if (canLift(state.selected) && (event.key === "PageUp" || event.key === "=")) {
+      event.preventDefault();
+      applyNudge(state.selected, "y", 1);
+    } else if (canLift(state.selected) && (event.key === "PageDown" || event.key === "-")) {
+      event.preventDefault();
+      applyNudge(state.selected, "y", -1);
+    } else if (state.selected.resize && (event.key === "," || event.key === "<")) {
+      applyNudge(state.selected, "w", -1);
+    } else if (state.selected.resize && (event.key === "." || event.key === ">")) {
+      applyNudge(state.selected, "w", 1);
+    } else if (state.selected.resize?.depthStep && (event.key === ";" || event.key === ":")) {
+      applyNudge(state.selected, "d", -1);
+    } else if (state.selected.resize?.depthStep && (event.key === "'" || event.key === "\"")) {
+      applyNudge(state.selected, "d", 1);
+    } else if (event.key === "q" || event.key === "Q" || event.key === "[") {
       state.selected.group.rotation.y += Math.PI / 12;
     } else if (event.key === "e" || event.key === "E" || event.key === "]") {
       state.selected.group.rotation.y -= Math.PI / 12;
@@ -193,6 +289,28 @@ export function createFurnitureControls(
     state,
     selectById: (id: string) => {
       select(items.find((entry) => entry.id === id) ?? null);
+    },
+    clearSelection: () => {
+      select(null);
+    },
+    nudge: (axis, dir) => {
+      if (!state.selected) {
+        return;
+      }
+      applyNudge(state.selected, axis, dir);
+      applyBounds(state.selected);
+      refreshHelper(state.selected);
+      hud.setSelection(state.selected, { ceilingHit: state.ceilingHit });
+    },
+    reclamp: () => {
+      for (const item of items) {
+        clampItem(item, getCabin(), state.snap);
+      }
+      if (state.selected) {
+        applyBounds(state.selected);
+        refreshHelper(state.selected);
+        hud.setSelection(state.selected, { ceilingHit: state.ceilingHit });
+      }
     },
     dispose: () => {
       renderer.domElement.removeEventListener("pointerdown", onPointerDown);

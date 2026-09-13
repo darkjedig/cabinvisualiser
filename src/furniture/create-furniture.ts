@@ -1,4 +1,5 @@
-import { ROOM } from "../config";
+import { clampItem } from "../interaction/furniture-controls";
+import type { CabinSpec } from "../cabin/types";
 import type { Materials } from "../scene/materials";
 import { createBar, createStool } from "./bar";
 import { createDesk, createOfficeChair } from "./desk";
@@ -8,7 +9,7 @@ import { createSofa } from "./sofa";
 import { createTvUnit } from "./tv";
 import type { FurnitureDef } from "./types";
 
-export function createAllFurniture(materials: Materials): FurnitureDef[] {
+export function createAllFurniture(materials: Materials, cabin: CabinSpec): FurnitureDef[] {
   const sofa = createSofa(materials);
   sofa.group.position.set(1.18, 0, -0.98);
 
@@ -43,14 +44,9 @@ export function createAllFurniture(materials: Materials): FurnitureDef[] {
 
   const items = [sofa, gym, kallax, tv, desk, chair, bar, ...stools];
   for (const item of items) {
-    item.group.position.x = clamp(item.group.position.x, ROOM.minX + 0.2, ROOM.maxX - 0.2);
-    item.group.position.z = clamp(item.group.position.z, ROOM.minZ + 0.2, ROOM.maxZ - 0.2);
+    clampItem(item, cabin, true);
   }
   return items;
-}
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, value));
 }
 
 export type { FurnitureDef } from "./types";
