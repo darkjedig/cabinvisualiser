@@ -5,6 +5,7 @@ import { createLBar, createLogBar } from "./bar";
 import { createBarware, type BarwareKind } from "./barware";
 import { createAddisShelf, createShelf, createWallShelf, type ShelfSize } from "./shelf";
 import { createSofaBed } from "./sofa-bed";
+import { createCoffeeTable, createConsoleTable } from "./tables";
 import type { FurnitureDef } from "./types";
 
 export type AddKind =
@@ -17,6 +18,8 @@ export type AddKind =
   | "shelf-addis"
   | "wall-shelf"
   | "sofa-bed"
+  | "console-table"
+  | "coffee-table"
   | "washer"
   | "dryer"
   | "bottle-spirit"
@@ -41,6 +44,8 @@ const s = FURNITURE.shelves;
 const w = FURNITURE.barware;
 
 export const ADD_CATALOG: AddSpec[] = [
+  { kind: "console-table", group: "Living", label: "Mango console", size: `${cm(FURNITURE.consoleTable.width)} × ${cm(FURNITURE.consoleTable.depth)} × ${cm(FURNITURE.consoleTable.height)} cm` },
+  { kind: "coffee-table", group: "Living", label: "Mango coffee table", size: `${cm(FURNITURE.coffeeTable.width)} × ${cm(FURNITURE.coffeeTable.depth)} × ${cm(FURNITURE.coffeeTable.height)} cm` },
   { kind: "sofa-bed", group: "Living", label: "RestNest sofa bed", size: `${cm(FURNITURE.sofaBed.width)} × ${cm(FURNITURE.sofaBed.depth)} × ${cm(FURNITURE.sofaBed.height)} cm` },
   { kind: "bar-l", group: "Bar", label: "L-shaped bar", size: `${cm(FURNITURE.barL.width)} × ${cm(FURNITURE.barL.depth)} × ${cm(FURNITURE.barL.height)} cm` },
   { kind: "bar-log", group: "Bar", label: "Log cabin bar", size: `${cm(FURNITURE.barLog.width)} × ${cm(FURNITURE.barLog.run)} × ${cm(FURNITURE.barLog.height)} cm` },
@@ -91,6 +96,12 @@ export function createAddedItem(kind: AddKind, materials: Materials, id: string,
   }
   if (kind === "sofa-bed") {
     return createSofaBed(materials, id);
+  }
+  if (kind === "console-table") {
+    return createConsoleTable(materials, id, true);
+  }
+  if (kind === "coffee-table") {
+    return createCoffeeTable(materials, id, true);
   }
   if (kind === "washer") {
     return createWasher(materials, id);

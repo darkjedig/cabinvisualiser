@@ -34,16 +34,18 @@ Pick a building in the left panel. Pieces keep their real sizes.
 - **Corner / Plan / Glazing / Orbit** cameras
 - **Layers** in the left panel hide furniture, walls, roof, or the deck
 - **Add** L-bar, log cabin bar, shelves, bottles and glasses from the left panel
+- **Mango console** 53 × 17.5 × 31.5 in / 135 × 44 × 80 cm (Living)
+- **Mango coffee table** 49 × 24.5 × 18 in / 124 × 62 × 46 cm (Living)
 - **RestNest sofa bed** 173 × 100 × 85 cm (Living)
 - **Addis 4-tier** plastic shelf 61 × 30 × 130 cm
 - **Washer** and **dryer** 60 × 60 × 85 cm each (Laundry)
 - **Log cabin bar** 160 × 60 × 110 cm timber L with interlocking logs; Long run / Return snap like the other L-bar
 - **Wall shelf** hangs on a wall; **Width / Depth** in the inspect panel snap-resize it
-- **Cube 77** and **Low wide 120** can be raised onto a wall with **PgUp / PgDn**
+- **Cube 77** and **Low wide 120** hang on a wall when raised
 - **L-shaped bar** Long run / Return snap in 5 cm steps; the 46 cm fridge always fits (min 100 cm run)
 - **◉** next to a piece (or **H**) hides that piece only
 - **×** or **Delete** removes extras you added
-- **PgUp / PgDn** raises or lowers bottles, glasses, and hangable shelves
+- **PgUp / PgDn**, **+ / −**, or **Height** in the inspect panel raises or lowers any piece (5 cm snap, 1 cm for bottles and glasses) so you can stack items. Cube and low shelves still snap to a wall when lifted.
 
 The gym is 2.08 m tall. A red box appears if a piece is too tall for the roof in that spot.
 

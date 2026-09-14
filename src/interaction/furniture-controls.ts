@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { ceilingAt, roomBounds, type CabinSpec } from "../cabin/types";
-import { canLift, snapSize, type FurnitureDef } from "../furniture/types";
+import { snapSize, type FurnitureDef } from "../furniture/types";
 
 export interface ControlState {
   selected: FurnitureDef | null;
@@ -55,25 +55,21 @@ export function clampItem(item: FurnitureDef, cabin: CabinSpec, snap: boolean): 
     item.group.position.x = Math.round(item.group.position.x / 0.05) * 0.05;
     item.group.position.z = Math.round(item.group.position.z / 0.05) * 0.05;
   }
-  if (canLift(item)) {
-    const minY = item.mount === "wall" ? 0.35 : 0;
-    const maxY = Math.max(minY, ceilingAt(item.group.position.z, cabin, item.group.position.x) - item.height - 0.02);
-    item.group.position.y = THREE.MathUtils.clamp(item.group.position.y, minY, maxY);
-    if (snap) {
-      const step = item.kind === "prop" ? 0.01 : 0.05;
-      item.group.position.y = Math.round(item.group.position.y / step) * step;
-    }
-    snapToWall(item, cabin);
-  } else {
-    item.group.position.y = 0;
+  const minY = item.mount === "wall" ? 0.35 : 0;
+  const maxY = Math.max(minY, ceilingAt(item.group.position.z, cabin, item.group.position.x) - item.height - 0.02);
+  item.group.position.y = THREE.MathUtils.clamp(item.group.position.y, minY, maxY);
+  if (snap) {
+    const step = item.kind === "prop" ? 0.01 : 0.05;
+    item.group.position.y = Math.round(item.group.position.y / step) * step;
   }
+  snapToWall(item, cabin);
   return item.group.position.y + item.height > ceilingAt(item.group.position.z, cabin, item.group.position.x) - 0.04;
 }
 
 export type NudgeAxis = "y" | "w" | "d";
 
 export function applyNudge(item: FurnitureDef, axis: NudgeAxis, dir: number): void {
-  if (axis === "y" && canLift(item)) {
+  if (axis === "y") {
     const step = item.kind === "prop" ? 0.02 : 0.05;
     item.group.position.y += dir * step;
     return;
@@ -252,10 +248,10 @@ export function createFurnitureControls(
       onRemovePiece?.(id);
       return;
     }
-    if (canLift(state.selected) && (event.key === "PageUp" || event.key === "=")) {
+    if (event.key === "PageUp" || event.key === "=") {
       event.preventDefault();
       applyNudge(state.selected, "y", 1);
-    } else if (canLift(state.selected) && (event.key === "PageDown" || event.key === "-")) {
+    } else if (event.key === "PageDown" || event.key === "-") {
       event.preventDefault();
       applyNudge(state.selected, "y", -1);
     } else if (state.selected.resize && (event.key === "," || event.key === "<")) {

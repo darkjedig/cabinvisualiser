@@ -6,6 +6,7 @@ import { createDesk, createOfficeChair } from "./desk";
 import { createGym } from "./gym";
 import { createKallax } from "./kallax";
 import { createSofa } from "./sofa";
+import { createCoffeeTable, createConsoleTable } from "./tables";
 import { createTvUnit } from "./tv";
 import type { FurnitureDef } from "./types";
 
@@ -42,7 +43,13 @@ export function createAllFurniture(materials: Materials, cabin: CabinSpec): Furn
     return stool;
   });
 
-  const items = [sofa, gym, kallax, tv, desk, chair, bar, ...stools];
+  const consoleTable = createConsoleTable(materials);
+  consoleTable.group.position.set(-0.15, 0, 1.62);
+
+  const coffeeTable = createCoffeeTable(materials);
+  coffeeTable.group.position.set(0.35, 0, 0.05);
+
+  const items = [sofa, gym, kallax, tv, desk, chair, bar, ...stools, consoleTable, coffeeTable];
   for (const item of items) {
     clampItem(item, cabin, true);
   }

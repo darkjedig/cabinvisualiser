@@ -10,9 +10,12 @@ Interactive 1:1 visualiser so the owner can test the same real furniture in seve
 - Cabin catalog in `src/cabin/catalog.ts` (Terminator, Dojo E 18×10, Fraya 5×4, Birkdale 20×10, UDPATIO 8×8 metal)
 - Furniture sizes from dimensions.txt — never scaled to fit
 - Drag / rotate on the XZ plane, 5 cm snap, wall clamp, roof height warning
+- Any piece can be raised / lowered (PgUp/PgDn or Height +/−) to stack; hangable shelves still snap to walls
 
 ## Recent progress
 
+- Every furniture piece and prop can now be raised or lowered so items can stack
+- Added Indian mango console (53 × 17.5 × 31.5 in) and matching coffee table (49 × 24.5 × 18 in)
 - Rebuilt the Dojo E with wrap-around front-left floor-to-ceiling glass, timber frames, vertical cladding, and a front deck
 - Added layer toggles (furniture / walls / roof / deck) and per-piece hide (eye button, Hide, or H)
 - Added spawnable L-bar, four shelf sizes, bottles and glasses (place on the selected bar/shelf, lift with PgUp/PgDn)

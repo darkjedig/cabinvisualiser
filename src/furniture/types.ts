@@ -75,8 +75,9 @@ export function snapSize(value: number, min: number, max: number, step: number):
   return Math.min(max, Math.max(min, snapped));
 }
 
-export function canLift(item: FurnitureDef): boolean {
-  return item.lift || item.kind === "prop";
+/** Every piece can rise off the floor so items can stack. `lift` still means hang-on-wall. */
+export function canLift(_item: FurnitureDef): boolean {
+  return true;
 }
 
 export function roundedBox(

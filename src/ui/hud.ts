@@ -81,6 +81,8 @@ const STARTER: InventoryPiece[] = [
   { id: "stool-1", label: "Stool 1", size: `${cm(FURNITURE.stool.height)} high` },
   { id: "stool-2", label: "Stool 2", size: `${cm(FURNITURE.stool.height)} high` },
   { id: "stool-3", label: "Stool 3", size: `${cm(FURNITURE.stool.height)} high` },
+  { id: "console-table", label: "Mango console", size: `${cm(FURNITURE.consoleTable.width)} × ${cm(FURNITURE.consoleTable.depth)} × ${cm(FURNITURE.consoleTable.height)}` },
+  { id: "coffee-table", label: "Mango coffee table", size: `${cm(FURNITURE.coffeeTable.width)} × ${cm(FURNITURE.coffeeTable.depth)} × ${cm(FURNITURE.coffeeTable.height)}` },
 ];
 
 function addGroupsHtml(): string {
@@ -178,7 +180,7 @@ export function createHud(initial: CabinSpec): HudHandle {
       <button type="button" data-view="orbit">Orbit</button>
       <button type="button" data-toggle="snap" class="on">Snap 5 cm</button>
     </div>
-    <p class="hint">Drag to move · Q / E rotate · R 90° · PgUp / PgDn height · , / . length · H hide · Del extras</p>
+    <p class="hint">Drag to move · Q / E rotate · R 90° · PgUp / PgDn stack height · , / . length · H hide · Del extras</p>
   `;
 
   fillCabinSpec(initial);

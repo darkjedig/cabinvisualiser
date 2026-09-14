@@ -28,6 +28,9 @@ Switch in the left panel. Furniture stays the same size in every building.
 - [RestNest Viva sofa bed](https://www.amazon.co.uk/RestNest-Seater-Sleeper-Convertible-Folding/dp/B0CYTC1H9H/) 173 × 100 × 85 cm (folds to a 130 × 196 cm bed)
 - [Addis 4-tier plastic shelf](https://www.amazon.co.uk/Addis-Plastic-Storage-Shelving-Units/dp/B0DW9DVWSH) 61 × 30 × 130 cm
 - Washing machine and tumble dryer, standard UK 60 × 60 × 85 cm each
+- Indian mango console 53 × 17.5 × 31.5 in (135 × 44 × 80 cm), three drawers over two doors
+- Indian mango coffee table 49 × 24.5 × 18 in (124 × 62 × 46 cm), matching stain
+- Any piece can be raised or lowered (5 cm snap) to stack on another; hangable shelves still snap to walls
 
 ## Master Task List
 
@@ -48,5 +51,7 @@ Switch in the left panel. Furniture stays the same size in every building.
 - [x] Add UDPATIO 8×8 galvanized metal shed
 - [x] Add RestNest Viva sofa bed, Addis 4-tier shelf, washer and dryer
 - [x] Plan view hides pent roof so the floor layout is readable
+- [x] Add Indian mango console (53 × 17.5 in) and matching coffee table (49 × 24.5 in)
+- [x] Raise / lower every piece so items can stack
 - [ ] Optional: save/load layouts
 - [ ] Optional: collision highlights between pieces

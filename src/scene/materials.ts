@@ -76,6 +76,7 @@ export function createMaterials(): {
   jumboGrey: THREE.MeshStandardMaterial;
   applianceWhite: THREE.MeshStandardMaterial;
   plasticBlack: THREE.MeshStandardMaterial;
+  mango: THREE.MeshStandardMaterial;
   dispose: () => void;
 } {
   const spruceMap = canvasTexture((ctx, w, h) => {
@@ -109,6 +110,26 @@ export function createMaterials(): {
 
   const oakMap = canvasTexture((ctx, w, h) => grain(ctx, w, h, "#b88854", "#6a4424"));
   oakMap.repeat.set(2, 1);
+
+  const mangoMap = canvasTexture((ctx, w, h) => {
+    grain(ctx, w, h, "#4a2c18", "#140c08");
+    ctx.fillStyle = "rgba(18, 10, 6, 0.28)";
+    ctx.fillRect(0, 0, w, h);
+    ctx.globalAlpha = 0.1;
+    for (let i = 0; i < 18; i += 1) {
+      const y = (i / 18) * h + Math.sin(i * 2.1) * 6;
+      ctx.strokeStyle = "#6a4228";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      for (let x = 0; x < w; x += 10) {
+        ctx.lineTo(x, y + Math.sin(x * 0.03 + i * 0.7) * 3);
+      }
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  });
+  mangoMap.repeat.set(2, 1);
 
   const spruce = new THREE.MeshStandardMaterial({
     map: spruceMap,
@@ -352,7 +373,14 @@ export function createMaterials(): {
     metalness: 0.04,
   });
 
-  const maps = [spruceMap, spruceVerticalMap, floorMap, oakMap];
+  const mango = new THREE.MeshStandardMaterial({
+    map: mangoMap,
+    roughness: 0.44,
+    metalness: 0.06,
+    color: "#5c3a26",
+  });
+
+  const maps = [spruceMap, spruceVerticalMap, floorMap, oakMap, mangoMap];
 
   return {
     spruce,
@@ -388,6 +416,7 @@ export function createMaterials(): {
     jumboGrey,
     applianceWhite,
     plasticBlack,
+    mango,
     dispose: () => {
       for (const map of maps) {
         map.dispose();
@@ -425,6 +454,7 @@ export function createMaterials(): {
       jumboGrey.dispose();
       applianceWhite.dispose();
       plasticBlack.dispose();
+      mango.dispose();
     },
   };
 }

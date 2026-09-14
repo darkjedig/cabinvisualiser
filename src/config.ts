@@ -72,6 +72,8 @@ export const FURNITURE = {
   addis: { width: 0.61, depth: 0.3, height: 1.3, boards: 4 },
   washer: { width: 0.6, depth: 0.6, height: 0.85 },
   dryer: { width: 0.6, depth: 0.6, height: 0.85 },
+  consoleTable: { width: 53 * 0.0254, depth: 17.5 * 0.0254, height: 31.5 * 0.0254 },
+  coffeeTable: { width: 49 * 0.0254, depth: 24.5 * 0.0254, height: 18 * 0.0254 },
   barware: {
     bottleSpirit: { width: 0.09, depth: 0.09, height: 0.32 },
     bottleWine: { width: 0.08, depth: 0.08, height: 0.33 },
